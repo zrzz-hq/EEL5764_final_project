@@ -1,0 +1,5 @@
+*.o
+*.s
+daxpy
+m5out*
+.vscode
