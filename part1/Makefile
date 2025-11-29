@@ -5,7 +5,7 @@ PROGRAM   := daxpy
 SRC       := daxpy.cpp
 OBJ       := daxpy.o
 
-CXX       := g++
+CXX       := riscv64-linux-gnu-g++
 CXXFLAGS  := -O2
 LDFLAGS   := -static
 

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-${GEM5_PATH}/build/X86/gem5.opt $@ ./config_timing.py
+${GEM5_PATH}/build/RISCV/gem5.opt $@ ./config_timing.py

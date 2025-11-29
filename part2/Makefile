@@ -5,12 +5,12 @@ PROGRAM   := daxpy
 SRC       := daxpy.cpp
 OBJ       := daxpy.o
 
-CXX       := g++
+CXX       := riscv64-linux-gnu-g++
 CXXFLAGS  := -O2
 LDFLAGS   := -static
 
 CXXFLAGS += -I$(GEM5_PATH)/include
-LDFLAGS += -L$(GEM5_PATH)/util/m5/build/x86/out
+LDFLAGS += -L$(GEM5_PATH)/util/m5/build/riscv/out
 
 # ---- Default target ----
 .PHONY: all
