@@ -5,6 +5,25 @@
 export GEM5_PATH=your/gem5/path
 ```
 
+## Environment Setup
+Follow the instructions [here](https://www.gem5.org/documentation/learning_gem5/part1/building/) to install build dependencies
+
+Build the RISCV ISA for gem5
+```bash
+cd ${GEM5_PATH}
+scons build/RISCV/gem5.opt -j$(nproc)
+```
+Install RISC-V Cross Compiler
+```bash
+sudo apt update  
+sudo apt install gcc-riscv64-linux-gnu g++-riscv64-linux-gnu libc6-dev-riscv64-cross
+```
+Build m5ops
+```bash
+cd util/m5
+scons riscv.CROSS_COMPILE=riscv-linux-gnu- build/riscv/out/m5
+```
+
 ## Part1
 ```bash
 cd part1
