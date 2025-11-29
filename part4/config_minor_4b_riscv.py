@@ -1,3 +1,4 @@
+import sys
 from gem5.components.boards.simple_board import SimpleBoard
 from gem5.components.processors.simple_processor import SimpleProcessor
 from gem5.components.cachehierarchies.ruby.mesi_two_level_cache_hierarchy import (
@@ -8,8 +9,15 @@ from gem5.components.processors.cpu_types import CPUTypes
 from gem5.isas import ISA
 from gem5.resources.resource import BinaryResource
 from gem5.simulate.simulator import Simulator
-from m5.objects import MinorFU, MinorFUPool, MinorDefaultIntFU, MinorDefaultIntMulFU, MinorDefaultIntDivFU, MinorDefaultMemFU, MinorDefaultMiscFU, MinorDefaultPredFU, MinorDefaultFloatSimdFU
-import sys
+from m5.objects import (
+    MinorFU, MinorFUPool, MinorDefaultIntFU, MinorDefaultIntMulFU, 
+    MinorDefaultIntDivFU, MinorDefaultMemFU, MinorDefaultMiscFU, 
+    MinorDefaultPredFU, MinorDefaultFloatSimdFU
+)
+
+# accept cli arguments
+int_opLat = int(sys.argv[1]) if len(sys.argv) > 1 else 2
+float_opLat = int(sys.argv[2]) if len(sys.argv) > 2 else 4
 
 cache_hierarchy = MESITwoLevelCacheHierarchy(
     l1d_size="16KiB",
@@ -22,25 +30,23 @@ cache_hierarchy = MESITwoLevelCacheHierarchy(
 )
 
 memory = SingleChannelDDR4_2400()
+# riscv
 processor = SimpleProcessor(cpu_type=CPUTypes.MINOR, isa=ISA.RISCV, num_cores=1)
 
+# -------------- part 4b -----------------
 
-# ----------- Part 4-------------
-
-opLat = int(sys.argv[1]) if len(sys.argv) > 1 else 6
-issueLat = int(sys.argv[2]) if len(sys.argv) > 2 else 1
+class CustomIntFU(MinorDefaultIntFU):
+    opLat = int_opLat
 
 class CustomFloatSimdFU(MinorDefaultFloatSimdFU):
-    opLat = opLat
-    issueLat = issueLat
+    opLat = float_opLat
 
-# Create custom FU pool with modified FloatSimdFU
 custom_fu_pool = MinorFUPool(funcUnits=[
-    MinorDefaultIntFU(),
-    MinorDefaultIntFU(), 
+    CustomIntFU(), #two interger units 
+    CustomIntFU(),         
     MinorDefaultIntMulFU(),
     MinorDefaultIntDivFU(),
-    CustomFloatSimdFU(), 
+    CustomFloatSimdFU(),   
     MinorDefaultPredFU(),
     MinorDefaultMemFU(),
     MinorDefaultMiscFU(),
@@ -48,7 +54,7 @@ custom_fu_pool = MinorFUPool(funcUnits=[
 
 processor.cores[0].core.executeFuncUnits = custom_fu_pool
 
-# ---------------------
+# -----------------------------------------
 
 board = SimpleBoard(
     clk_freq="3GHz",
@@ -61,4 +67,3 @@ board.set_se_binary_workload(BinaryResource('../part2/daxpy_riscv'))
 
 simulator = Simulator(board=board)
 simulator.run()
-

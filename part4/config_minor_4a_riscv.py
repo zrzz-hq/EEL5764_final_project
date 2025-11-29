@@ -22,7 +22,7 @@ cache_hierarchy = MESITwoLevelCacheHierarchy(
 )
 
 memory = SingleChannelDDR4_2400()
-processor = SimpleProcessor(cpu_type=CPUTypes.MINOR, isa=ISA.X86, num_cores=1)
+processor = SimpleProcessor(cpu_type=CPUTypes.MINOR, isa=ISA.RISCV, num_cores=1)
 
 
 # ----------- Part 4-------------
@@ -34,13 +34,12 @@ class CustomFloatSimdFU(MinorDefaultFloatSimdFU):
     opLat = opLat
     issueLat = issueLat
 
-# Create custom FU pool with modified FloatSimdFU
 custom_fu_pool = MinorFUPool(funcUnits=[
     MinorDefaultIntFU(),
     MinorDefaultIntFU(), 
     MinorDefaultIntMulFU(),
     MinorDefaultIntDivFU(),
-    CustomFloatSimdFU(), ##
+    CustomFloatSimdFU(), 
     MinorDefaultPredFU(),
     MinorDefaultMemFU(),
     MinorDefaultMiscFU(),
@@ -57,7 +56,7 @@ board = SimpleBoard(
     cache_hierarchy=cache_hierarchy,
 )
 
-board.set_se_binary_workload(BinaryResource('../part2/daxpy'))
+board.set_se_binary_workload(BinaryResource('../part2/daxpy_riscv'))
 
 simulator = Simulator(board=board)
 simulator.run()
